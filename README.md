@@ -6,7 +6,7 @@ O mercado de videogames é gigantesco, movimenta bilhões e muda o tempo todo. M
 
 A ideia de criar esse projeto surgiu justamente para resolver isso: juntar um mar de dados históricos da indústria de games e transformar em algo **visual, prático e fácil de entender** para qualquer pessoa que goste ou trabalhe com essa área.
 
-# 📊 Uma visão bem clara de como o mercado funciona
+## 📊 Uma visão bem clara de como o mercado funciona
 Com esse painel interativo, dá para entender o panorama completo :
 
 📈 A evolução do tempo: Dá para ver claramente como a indústria cresceu, quais foram os anos de ouro das vendas e como o mercado se comportou ao longo das décadas.
@@ -15,7 +15,7 @@ Com esse painel interativo, dá para entender o panorama completo :
 
 🌍 regiões: O painel mostra exatamente onde os jogos vendem mais (América do Norte, Europa, Japão, etc.), o que ajuda a entender gostos diferentes pelo mundo.
 
-# ⚡ Praticidade : Filtros e Inteligência Artificial
+## ⚡ Praticidade : Filtros e Inteligência Artificial
 A parte mais legal é que você não precisa ficar perdendo horas procurando as coisas numa tabela gigante:
 
 🎛️ Filtros rápidos (Streamlit): Na barra lateral, você consegue filtrar tudo por período, plataforma ou gênero com poucos cliques, e os gráficos se atualizam.
@@ -35,3 +35,5 @@ abaixo os anexos dos das imagens com o funcionamento dos arquivos:
 
 ### Chat com IA Integrada
 ![Assistente de IA](Analisegame.7.png)
+
+chat focado apenas na área do projeto, filtrando perguntas e sugestões das mesmas.
