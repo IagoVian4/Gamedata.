@@ -8,9 +8,6 @@ import re
 import unicodedata
 from difflib import get_close_matches
 
-# ============================================================
-# CONFIGURAÇÃO
-# ============================================================
 
 st.set_page_config(
     page_title="Game Sales Analytics",
@@ -20,9 +17,6 @@ st.set_page_config(
 )
 
 
-# ============================================================
-# ESTILO
-# ============================================================
 
 st.markdown(
     """
@@ -50,17 +44,11 @@ st.markdown(
 )
 
 
-# ============================================================
-# CAMINHO DO DATASET
-# ============================================================
 
 PASTA_PROJETO = Path(__file__).resolve().parent
 CAMINHO_CSV = PASTA_PROJETO / "vgsales.csv"
 
 
-# ============================================================
-# CARREGAMENTO E PREPARAÇÃO DOS DADOS
-# ============================================================
 
 @st.cache_data
 def carregar_dados(caminho):
@@ -70,15 +58,9 @@ def carregar_dados(caminho):
 
     df = pd.read_csv(caminho)
 
-    # --------------------------------------------------------
-    # Limpeza dos nomes das colunas
-    # --------------------------------------------------------
 
     df.columns = df.columns.str.strip()
 
-    # --------------------------------------------------------
-    # Limpeza de textos
-    # --------------------------------------------------------
 
     colunas_texto = [
         "Name",
@@ -91,9 +73,6 @@ def carregar_dados(caminho):
         if coluna in df.columns:
             df[coluna] = df[coluna].astype("string").str.strip()
 
-    # --------------------------------------------------------
-    # Valores ausentes
-    # --------------------------------------------------------
 
     if "Publisher" in df.columns:
         df["Publisher"] = df["Publisher"].fillna("Desconhecido")
@@ -104,9 +83,6 @@ def carregar_dados(caminho):
     if "Platform" in df.columns:
         df["Platform"] = df["Platform"].fillna("Desconhecida")
 
-    # --------------------------------------------------------
-    # Conversão numérica
-    # --------------------------------------------------------
 
     colunas_numericas = [
         "Rank",
@@ -128,9 +104,6 @@ def carregar_dados(caminho):
     return df
 
 
-# ============================================================
-# VERIFICAÇÃO DO DATASET
-# ============================================================
 
 if not CAMINHO_CSV.exists():
 
@@ -161,9 +134,6 @@ except Exception as erro:
     st.stop()
 
 
-# ============================================================
-# VALIDAÇÃO DAS COLUNAS
-# ============================================================
 
 COLUNAS_OBRIGATORIAS = [
     "Rank",
@@ -199,9 +169,6 @@ if colunas_faltantes:
     st.stop()
 
 
-# ============================================================
-# FUNÇÕES DE ANÁLISE
-# ============================================================
 
 def vendas_por_plataforma(dataframe, limite=None):
 
@@ -301,9 +268,6 @@ def vendas_por_ano(dataframe):
     )
 
 
-# ============================================================
-# CONTEXTO PARA A IA
-# ============================================================
 
 def gerar_contexto_ia(dataframe, pergunta):
 
@@ -321,9 +285,6 @@ O filtro atual não possui nenhum jogo.
 Não existem dados disponíveis para realizar a análise.
 """
 
-    # ========================================================
-    # RESUMO GERAL
-    # ========================================================
 
     total_jogos = len(dataframe)
 
@@ -338,9 +299,6 @@ Não existem dados disponíveis para realizar a análise.
     menor_venda = dataframe["Global_Sales"].min()
 
 
-    # ========================================================
-    # TOP JOGOS
-    # ========================================================
 
     top_jogos_df = (
         dataframe[
@@ -361,9 +319,6 @@ Não existem dados disponíveis para realizar a análise.
     )
 
 
-    # ========================================================
-    # PLATAFORMAS
-    # ========================================================
 
     vendas_plataforma = (
         dataframe
@@ -385,9 +340,6 @@ Não existem dados disponíveis para realizar a análise.
     )
 
 
-    # ========================================================
-    # GÊNEROS
-    # ========================================================
 
     vendas_genero = (
         dataframe
@@ -409,9 +361,6 @@ Não existem dados disponíveis para realizar a análise.
     )
 
 
-    # ========================================================
-    # PUBLISHERS
-    # ========================================================
 
     vendas_publisher = (
         dataframe
@@ -433,9 +382,6 @@ Não existem dados disponíveis para realizar a análise.
     )
 
 
-    # ========================================================
-    # REGIÕES
-    # ========================================================
 
     vendas_regiao = {
         "América do Norte":
@@ -452,9 +398,6 @@ Não existem dados disponíveis para realizar a análise.
     }
 
 
-    # ========================================================
-    # PARTICIPAÇÃO REGIONAL
-    # ========================================================
 
     participacao_regional = {}
 
@@ -471,9 +414,6 @@ Não existem dados disponíveis para realizar a análise.
             participacao_regional[regiao] = 0
 
 
-    # ========================================================
-    # VENDAS POR ANO
-    # ========================================================
 
     vendas_ano = (
         dataframe
@@ -484,9 +424,6 @@ Não existem dados disponíveis para realizar a análise.
     )
 
 
-    # ========================================================
-    # CONSTRUÇÃO DO CONTEXTO
-    # ========================================================
 
     contexto = f"""
 ============================================================
@@ -661,9 +598,6 @@ VENDAS POR ANO
         )
 
 
-    # ========================================================
-    # MELHORES RESULTADOS
-    # ========================================================
 
     if not vendas_plataforma.empty:
 
@@ -723,9 +657,6 @@ Média:
 """
 
 
-    # ========================================================
-    # BUSCA POR NOME DE JOGO
-    # ========================================================
 
     pergunta_limpa = (
         str(pergunta)
@@ -781,9 +712,6 @@ JOGOS ENCONTRADOS RELACIONADOS À PERGUNTA
 
     return contexto
 
-    # --------------------------------------------------------
-    # Contexto básico
-    # --------------------------------------------------------
 
     contexto = f"""
 DADOS CALCULADOS PELO PYTHON
@@ -886,9 +814,6 @@ QUANTIDADE DE JOGOS POR GÊNERO
         )
 
 
-    # --------------------------------------------------------
-    # Procurar jogos relacionados à pergunta
-    # --------------------------------------------------------
 
     pergunta_limpa = str(pergunta).strip().lower()
 
@@ -929,9 +854,6 @@ JOGOS ENCONTRADOS PELO NOME DA PERGUNTA
     return contexto
 
 
-# ============================================================
-# TÍTULO
-# ============================================================
 
 st.title("🎮 Game Sales Analytics")
 
@@ -947,16 +869,10 @@ st.markdown(
 st.divider()
 
 
-# ============================================================
-# SIDEBAR
-# ============================================================
 
 st.sidebar.header("🎛️ Filtros")
 
 
-# ------------------------------------------------------------
-# ANO
-# ------------------------------------------------------------
 
 anos = sorted(
     df["Year"]
@@ -981,9 +897,6 @@ else:
     ano_selecionado = None
 
 
-# ------------------------------------------------------------
-# PLATAFORMAS
-# ------------------------------------------------------------
 
 plataformas = sorted(
     df["Platform"]
@@ -998,9 +911,6 @@ plataformas_selecionadas = st.sidebar.multiselect(
 )
 
 
-# ------------------------------------------------------------
-# GÊNEROS
-# ------------------------------------------------------------
 
 generos = sorted(
     df["Genre"]
@@ -1015,9 +925,6 @@ generos_selecionados = st.sidebar.multiselect(
 )
 
 
-# ============================================================
-# FILTRO PRINCIPAL
-# ============================================================
 
 df_filtrado = df.copy()
 
@@ -1063,9 +970,6 @@ else:
     df_filtrado = df_filtrado.iloc[0:0]
 
 
-# ============================================================
-# AVISO FILTRO VAZIO
-# ============================================================
 
 if df_filtrado.empty:
 
@@ -1078,9 +982,6 @@ if df_filtrado.empty:
     )
 
 
-# ============================================================
-# KPIs
-# ============================================================
 
 total_jogos = len(df_filtrado)
 
@@ -1162,9 +1063,6 @@ with col4:
 st.divider()
 
 
-# ============================================================
-# ABAS
-# ============================================================
 
 aba1, aba2, aba3, aba4, aba5, aba6 = st.tabs(
     [
@@ -1178,9 +1076,6 @@ aba1, aba2, aba3, aba4, aba5, aba6 = st.tabs(
 )
 
 
-# ============================================================
-# ABA 1 — VISÃO GERAL
-# ============================================================
 
 with aba1:
 
@@ -1190,9 +1085,6 @@ with aba1:
     col1, col2 = st.columns(2)
 
 
-    # --------------------------------------------------------
-    # TOP JOGOS
-    # --------------------------------------------------------
 
     with col1:
 
@@ -1238,9 +1130,6 @@ with aba1:
             )
 
 
-    # --------------------------------------------------------
-    # REGIÕES
-    # --------------------------------------------------------
 
     with col2:
 
@@ -1283,9 +1172,6 @@ with aba1:
             )
 
 
-    # --------------------------------------------------------
-    # EVOLUÇÃO
-    # --------------------------------------------------------
 
     st.markdown(
         "### 📈 Evolução das vendas ao longo dos anos"
@@ -1322,9 +1208,6 @@ with aba1:
         )
 
 
-# ============================================================
-# ABA 2 — PLATAFORMAS
-# ============================================================
 
 with aba2:
 
@@ -1429,9 +1312,6 @@ with aba2:
                 )
 
 
-# ============================================================
-# ABA 3 — GÊNEROS
-# ============================================================
 
 with aba3:
 
@@ -1511,9 +1391,6 @@ with aba3:
             )
 
 
-    # --------------------------------------------------------
-    # MÉDIA
-    # --------------------------------------------------------
 
     st.markdown(
         "### 🔎 Vendas médias por jogo"
@@ -1553,9 +1430,6 @@ with aba3:
         )
 
 
-# ============================================================
-# ABA 4 — PUBLISHERS
-# ============================================================
 
 with aba4:
 
@@ -1645,9 +1519,6 @@ with aba4:
             )
 
 
-# ============================================================
-# ABA 5 — REGIÕES
-# ============================================================
 
 with aba5:
 
@@ -1692,9 +1563,6 @@ with aba5:
         )
 
 
-    # --------------------------------------------------------
-    # GÊNEROS POR REGIÃO
-    # --------------------------------------------------------
 
     st.markdown(
         "### 🎯 Gêneros por região"
@@ -1749,9 +1617,6 @@ with aba5:
         )
 
 
-# ============================================================
-# ABA 6 — INSIGHTS
-# ============================================================
 
 with aba6:
 
@@ -1803,9 +1668,6 @@ with aba6:
         )
 
 
-    # --------------------------------------------------------
-    # MÉDIA POR GÊNERO
-    # --------------------------------------------------------
 
     media_genero = (
         df_filtrado
@@ -1830,9 +1692,6 @@ with aba6:
         )
 
 
-# ============================================================
-# TABELA DETALHADA
-# ============================================================
 
 st.divider()
 
@@ -1916,9 +1775,6 @@ else:
     )
 
 
-# ============================================================
-# DOWNLOAD
-# ============================================================
 
 csv_download = (
     df_tabela
@@ -1934,9 +1790,6 @@ st.download_button(
     mime="text/csv"
 )
 
-# ============================================================
-# INTERPRETAÇÃO INTELIGENTE DA PERGUNTA
-# ============================================================
 
 def remover_acentos(texto):
     texto = unicodedata.normalize(
@@ -1962,9 +1815,6 @@ def normalizar_pergunta(pergunta):
     if not texto_original:
         return texto_original
 
-    # --------------------------------------------------------
-    # Padronização
-    # --------------------------------------------------------
 
     texto = texto_original.lower()
 
@@ -1974,9 +1824,6 @@ def normalizar_pergunta(pergunta):
         texto
     ).strip()
 
-    # --------------------------------------------------------
-    # Correções diretas comuns
-    # --------------------------------------------------------
 
     correcoes = {
         "qua": "qual",
@@ -2026,9 +1873,6 @@ def normalizar_pergunta(pergunta):
         palavras_corrigidas
     )
 
-    # --------------------------------------------------------
-    # Vocabulário conhecido do projeto
-    # --------------------------------------------------------
 
     vocabulario = [
         "qual",
@@ -2091,9 +1935,6 @@ def normalizar_pergunta(pergunta):
 
     texto = " ".join(resultado)
 
-    # --------------------------------------------------------
-    # Restaurar acentos apenas nas palavras conhecidas
-    # --------------------------------------------------------
 
     acentos = {
         "genero": "gênero",
@@ -2123,9 +1964,6 @@ def normalizar_pergunta(pergunta):
         palavras_finais
     )
 
-    # --------------------------------------------------------
-    # Primeira letra maiúscula
-    # --------------------------------------------------------
 
     if texto:
 
@@ -2136,9 +1974,6 @@ def normalizar_pergunta(pergunta):
 
     return texto
 
-# ============================================================
-# CONVERSÃO DE MOEDAS
-# ============================================================
 
 import json
 from urllib.request import Request, urlopen
@@ -2202,13 +2037,7 @@ def converter_moeda(valor, moeda_origem, moeda_destino):
         }
 
 
-# ============================================================
-# CHAT IA — QWEN 3:4B
-# ============================================================
 
-# ------------------------------------------------------------
-# CABEÇALHO
-# ------------------------------------------------------------
 
 col_chat_titulo, col_chat_sugestoes = st.columns(
     [3, 1]
@@ -2261,18 +2090,12 @@ with col_chat_sugestoes:
                 st.rerun()
 
 
-# ============================================================
-# MEMÓRIA
-# ============================================================
 
 if "mensagens_game_ai" not in st.session_state:
 
     st.session_state.mensagens_game_ai = []
 
 
-# ============================================================
-# HISTÓRICO
-# ============================================================
 
 for mensagem in st.session_state.mensagens_game_ai:
 
@@ -2285,9 +2108,6 @@ for mensagem in st.session_state.mensagens_game_ai:
         )
 
 
-# ============================================================
-# ENTRADA
-# ============================================================
 
 pergunta_digitada = st.chat_input(
     "Ex.: Qual plataforma vendeu mais?"
@@ -2305,24 +2125,15 @@ pergunta = (
 )
 
 
-# ============================================================
-# PROCESSAMENTO
-# ============================================================
 
 if pergunta:
 
-    # --------------------------------------------------------
-    # Mostrar pergunta original
-    # --------------------------------------------------------
 
     with st.chat_message("user"):
 
         st.write(pergunta)
 
 
-    # --------------------------------------------------------
-    # Guardar pergunta original
-    # --------------------------------------------------------
 
     st.session_state.mensagens_game_ai.append(
         {
@@ -2332,18 +2143,12 @@ if pergunta:
     )
 
 
-    # --------------------------------------------------------
-    # Normalizar pergunta
-    # --------------------------------------------------------
 
     pergunta_interpretada = normalizar_pergunta(
         pergunta
     )
 
 
-    # --------------------------------------------------------
-    # Mostrar interpretação quando houver alteração
-    # --------------------------------------------------------
 
     if pergunta_interpretada.strip().lower() != pergunta.strip().lower():
 
@@ -2352,9 +2157,6 @@ if pergunta:
         )
 
 
-    # ========================================================
-    # CONTEXTO REAL DO PYTHON
-    # ========================================================
 
     contexto_dados = gerar_contexto_ia(
         df_filtrado,
@@ -2362,9 +2164,6 @@ if pergunta:
     )
 
 
-    # ========================================================
-    # PROMPT DO SISTEMA
-    # ========================================================
 
     sistema = """
 Você é o assistente de IA de um projeto de análise de dados
@@ -2425,9 +2224,6 @@ não invente.
 """
 
 
-    # ========================================================
-    # MENSAGENS
-    # ========================================================
 
     mensagens = [
         {
@@ -2444,9 +2240,6 @@ não invente.
     ]
 
 
-    # --------------------------------------------------------
-    # Histórico recente
-    # --------------------------------------------------------
 
     historico = (
         st.session_state
@@ -2458,9 +2251,6 @@ não invente.
     )
 
 
-    # ========================================================
-    # CHAMADA DO OLLAMA
-    # ========================================================
 
     try:
 
@@ -2482,9 +2272,6 @@ não invente.
             )
 
 
-        # ----------------------------------------------------
-        # Guardar resposta
-        # ----------------------------------------------------
 
         st.session_state.mensagens_game_ai.append(
             {
